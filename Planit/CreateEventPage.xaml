@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Title="Create New Event"
+             x:Class="Planit.CreateEventPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Name:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 10, 3, 0"/>
+            <Entry
+                Margin="15,0,15,3"
+                Text="{Binding Name}"/>
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="Start Time:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <TimePicker
+                    Margin="0,0,15,3"
+                    Time="{Binding StartTime}"/>
+            </StackLayout>
+            
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="End Time:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <TimePicker
+                    Margin="0,0,15,3"
+                    Time="{Binding EndTime}"/>
+            </StackLayout>
+            
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="One Time?"
+                FontSize="Title"
+                VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <Switch x:Name="ReccuringSwitch" Toggled="ReccuringSwitch_Toggled"/>
+            </StackLayout>
+            
+            <StackLayout
+                Orientation="Horizontal"
+                IsVisible="False"
+                x:Name="datepicker">
+                <Label Text="Date:"
+                FontSize="Title"
+                VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <DatePicker
+                    x:Name="eventdate"
+                    Date="{Binding Date}"/>
+            </StackLayout>
+            
+            <Label Text="Days:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="StartAndExpand"
+                Margin="15, 3, 3, 3"
+                x:Name="daystag"/>
+            <Grid
+                Margin="40,3,3,3"
+                x:Name="daysgrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="  Mo" Grid.Row="0" Grid.Column="0"/>
+                <Label Text="  Tu" Grid.Row="0" Grid.Column="1"/>
+                <Label Text="  We" Grid.Row="0" Grid.Column="2"/>
+                <Label Text="  Th" Grid.Row="0" Grid.Column="3"/>
+                <Label Text="  Fr" Grid.Row="0" Grid.Column="4"/>
+                <Label Text="  Sa" Grid.Row="0" Grid.Column="5"/>
+                <Label Text="  Su" Grid.Row="0" Grid.Column="6"/>
+                <CheckBox Grid.Row="1" Grid.Column="0" x:Name="MonCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="1" x:Name="TueCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="2" x:Name="WedCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="3" x:Name="ThuCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="4" x:Name="FriCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="5" x:Name="SatCheck"/>
+                <CheckBox Grid.Row="1" Grid.Column="6" x:Name="SunCheck"/>
+            </Grid>
+            
+            <Button
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Text="Save Event"
+                Clicked="Save_Button_Clicked"/>
+            <Button
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Text="Delete Event"
+                Clicked="Delete_Button_Clicked"
+                IsVisible="False"
+                x:Name="deletebutton"/>
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

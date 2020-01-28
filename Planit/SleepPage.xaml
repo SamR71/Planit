@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Planit.SleepPage"
+             Title="Sleep Preferences">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="I Want to Go to Sleep At:"
+                VerticalOptions="Start" 
+                HorizontalOptions="StartAndExpand" 
+                Margin="15,10,3,3"
+                FontSize="Title"/>
+            <TimePicker
+                    Margin="15,3,15,3"
+                    x:Name="bedtimesetter"/>
+
+            <Label Text="I Want to Wake Up At:"
+                VerticalOptions="Start" 
+                HorizontalOptions="StartAndExpand" 
+                Margin="15,3,3,3"
+                FontSize="Title"/>
+            <TimePicker
+                    Margin="15,3,15,3"
+                    x:Name="wakeupsetter"/>
+
+            <Button Text="Save Preferences"
+                    Margin="15,15,15,15"
+                    VerticalOptions="EndAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="Button_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

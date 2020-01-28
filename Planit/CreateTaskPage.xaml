@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Title="Create New Task"
+             x:Class="Planit.CreateTaskPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Name:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 10, 3, 0"/>
+            <Entry
+                Margin="15,0,15,3"
+                Text="{Binding Name}"/>
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="Due Date:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <DatePicker
+                    Margin="0,0,15,3"
+                    x:Name="duedate"
+                    Date="{Binding Due}"/>
+            </StackLayout>
+
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="Due Time:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <TimePicker
+                    Margin="0,0,15,3"
+                    x:Name="duetime"
+                    Time="{Binding DueTime}"/>
+            </StackLayout>
+
+            <Label Text="Approximate Time to Complete (Hours):"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 0, 3, 3"/>
+            <Entry x:Name="numberpicker" Keyboard="Numeric"/>
+
+            <Button
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Text="Save Task"
+                Clicked="Save_Button_Clicked"/>
+            <Button
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Text="Delete Task"
+                Clicked="Delete_Button_Clicked"
+                IsVisible="False"
+                x:Name="deletebutton"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
