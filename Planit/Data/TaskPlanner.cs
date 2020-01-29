@@ -8,7 +8,11 @@ namespace Planit.Data
 {
     class TaskPlanner
     {
+        private int wakeHour;
+        private int sleepHour;
         //calculates (or recalculates) the positioning of PlannedTasks
+        //NOTE: a block of time here is a 15 minute interval
+        //-->synchs up with how the calendar is currently implemented
         async public void PlanTasks(bool recalcAll)
         {
             //get tasks, events, and planned tasks
@@ -36,6 +40,9 @@ namespace Planit.Data
                 hoursInDay = bedTime - wakeUpTime;
             }
 
+            wakeHour = wakeUpTime;
+            sleepHour = bedTime;
+
             //get farthest out Deadline
             DateTime today = DateTime.Today;
 
@@ -59,29 +66,39 @@ namespace Planit.Data
             DateTime[] dates = GetDates(today,daysToDoAll);
 
             //go through all tasks and events, place in calendar
+            //by placing in calendar, we mean putting a -1 there to signify -- its blocked
+
+            int blocksPlaced = 0;
+
             foreach(Event e in EventsList)
             {
-                //go through each day, see if we should put task in
+                //go through each day, see if we should put event in
                 for(int i = 0; i < daysToDoAll; i++)
                 {
                     if (dates[i] == e.Date || OnToday(days[i], e))
                     {
-                        //TODO: PLACE THE EVENT IN THE CALENDAR FOR THIS DAY
+                        blocksPlaced += AddBlock(e.StartTime.TotalHours,e.EndTime.TotalHours, calendar, i);
                     }
 
                 }
 
             }
-            foreach(PlannedTask pt in PlannedList)
+
+            //only do if we recalculating all
+            if (recalcAll)
             {
-                for(int i = 0; i < daysToDoAll; i++)
+                foreach (PlannedTask pt in PlannedList)
                 {
-                    if(pt.Date == dates[i])
+                    for (int i = 0; i < daysToDoAll; i++)
                     {
-                        ////TODO: PLACE THE PLANNEDTASK IN THE CALENDAR FOR THIS DAY
+                        //go through each day, see if we should put task in
+                        if (pt.Date == dates[i])
+                        {
+                            blocksPlaced += AddBlock(pt.StartTime.TotalHours,pt.EndTime.TotalHours, calendar, i);
+                        }
                     }
+
                 }
-                
             }
 
             //Calculate blocks needed for each task
@@ -93,6 +110,21 @@ namespace Planit.Data
             {
                 blocksLeft.Add(t, (int)t.HoursLeft * 4);
             }
+
+            //go through and subtract the blocks used by the "planned" parts of the task
+            if (!recalcAll)
+            {
+                foreach(PlannedTask pt in PlannedList)
+                {
+                    int blocksUsed = (int)Math.Ceiling(pt.EndTime.Subtract(pt.StartTime).TotalHours * 4);
+
+                    blocksLeft[pt.Parent] =  blocksLeft[pt.Parent] - blocksUsed;
+                }
+            }
+
+            //calculate number of free blocks in the schedule
+            //allowing an hour after/before bed for -- nothing
+            int blocksFree = (((4 * hoursInDay) - 8) * daysToDoAll) - blocksPlaced;
 
 
         }
@@ -121,6 +153,38 @@ namespace Planit.Data
             }
         }
 
+        //adds a block with given start/end times into the calendar
+        private int AddBlock(double startTime, double endTime, int[,] cal, int dayIndex)
+        {
+            //make sure block actually fits in the given sleep range
+            int tempSleepHour = sleepHour;
+            if (wakeHour > sleepHour)
+            {
+                tempSleepHour += 24;
+            }
+            double tempEndTime = endTime;
+            if (endTime < startTime)
+            {
+                tempEndTime += 24;
+            }
+
+            int blocksPlaced = 0;
+            if (startTime >= wakeHour && tempEndTime <= tempSleepHour) //falls within calendar range
+            {
+                //get appropriate indicies to schedule
+                int startIndex = (int)Math.Floor((startTime - wakeHour) / 0.25);
+                int endIndex = (int)Math.Ceiling((tempEndTime - wakeHour) / 0.25);
+
+                for(int i = startIndex; i < endIndex; i++)
+                {
+                    cal[i, dayIndex] = -1;
+                    blocksPlaced++;
+                }
+            }
+            return blocksPlaced;
+        }
+
+        //returns an array corresponding to the days of the week for the planning calendar
         private DayOfWeek[] GetDaysOfWeek(DateTime firstDay, int totalDays)
         {
             DayOfWeek[] days = new DayOfWeek[totalDays];
@@ -133,6 +197,7 @@ namespace Planit.Data
             return days;
         }
 
+        //returns an array corresponding to the dates of the planning calendar
         private DateTime[] GetDates(DateTime firstDay, int totalDays)
         {
             DateTime[] dates = new DateTime[totalDays];
