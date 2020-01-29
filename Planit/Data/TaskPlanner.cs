@@ -105,10 +105,19 @@ namespace Planit.Data
 
             //not sure if best to use dictionary here, but eh
             Dictionary<Task, int> blocksLeft = new Dictionary<Task, int>();
+            Dictionary<Task, int> taskIDs = new Dictionary<Task, int>();
+            int blocksToSchedule = 0;
 
+            int idCounter = 0;
             foreach(Task t in TasksList)
             {
-                blocksLeft.Add(t, (int)t.HoursLeft * 4);
+                int blocksForTask = (int)t.HoursLeft * 4;
+
+                blocksLeft.Add(t, blocksForTask);
+                blocksToSchedule += blocksForTask;
+
+                taskIDs.Add(t, idCounter);
+                idCounter++;
             }
 
             //go through and subtract the blocks used by the "planned" parts of the task
@@ -124,7 +133,14 @@ namespace Planit.Data
 
             //calculate number of free blocks in the schedule
             //allowing an hour after/before bed for -- nothing
+            //note we double count anything in the hour before/after bed (who knows if this is a bug or feature yet)
             int blocksFree = (((4 * hoursInDay) - 8) * daysToDoAll) - blocksPlaced;
+
+            while(blocksFree > 0 && blocksToSchedule > 0)
+            {
+                //TODO: the entire algorithm lol
+
+            }
 
 
         }
