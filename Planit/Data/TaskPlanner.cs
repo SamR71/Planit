@@ -36,7 +36,7 @@ namespace Planit.Data
                 hoursInDay = bedTime - wakeUpTime;
             }
 
-            //get farthest out Deadline
+            //get farthest out Deadline 
             DateTime today = DateTime.Today;
 
             DateTime farthestOut = DateTime.Today;
