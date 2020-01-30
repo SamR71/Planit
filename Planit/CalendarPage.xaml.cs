@@ -198,13 +198,13 @@ namespace Planit
                 //check if event applies to current day
                 if(e.EventType == Event.Type.OneTime && e.Date == day)
                 {
-                    AddEvent(e);
+                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.PowderBlue);
                 }
                 else
                 {
                     if (OnToday(dayOfWeek, e))
                     {
-                        AddEvent(e);
+                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.PowderBlue);
                     }
                 }
             }
@@ -213,37 +213,38 @@ namespace Planit
             {
                 if(pt.Date == day)
                 {
-                    AddPlanned(pt);
+                    AddEntry(pt.StartTime,pt.EndTime,pt.Name,Color.CornflowerBlue);
                 }
             }
         }
 
-        private void AddEvent(Event e)
+
+        private void AddEntry(TimeSpan startTime, TimeSpan endTime, String name, Color color)
         {
             //make sure Event actually fits in the given sleep range
-            double eventStart = e.StartTime.TotalHours;
-            double eventEnd = e.EndTime.TotalHours;
+            double taskStart = startTime.TotalHours;
+            double taskEnd = endTime.TotalHours;
 
             int tempSleepHour = sleepHour;
             if (wakeHour > sleepHour)
             {
                 tempSleepHour += 24;
             }
-            double tempEventEnd = eventEnd;
-            if (eventEnd < eventStart)
+            double tempEventEnd = taskEnd;
+            if (taskEnd < taskStart)
             {
                 tempEventEnd += 24;
             }
 
-            if (eventStart >= wakeHour && tempEventEnd <= tempSleepHour) //falls within calendar range
+            if (taskStart >= wakeHour && tempEventEnd <= tempSleepHour) //falls within calendar range
             {
                 //create the button
                 Button placedEvent = new Button
                 {
-                    BackgroundColor = Color.PowderBlue,
+                    BackgroundColor = color,
                     TextColor = Color.Black,
                     CornerRadius = 15,
-                    Text = e.Name,
+                    Text = name,
                     Margin = new Thickness(0, 0, 0, 0),
                     Padding = new Thickness(2, 2, 2, 2),
                     HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -251,18 +252,12 @@ namespace Planit
                 };
 
                 //get appropriate indicies to schedule
-                int startIndex = (int)Math.Floor((eventStart - wakeHour)/0.25) + 1 + (int)Math.Floor(2*(eventStart-wakeHour));
-                int endIndex = (int)Math.Ceiling((tempEventEnd - wakeHour)/0.25) + (int)Math.Ceiling(2*(tempEventEnd-wakeHour));
+                int startIndex = (int)Math.Floor((taskStart - wakeHour) / 0.25) + 1 + (int)Math.Floor(2 * (taskStart - wakeHour));
+                int endIndex = (int)Math.Ceiling((tempEventEnd - wakeHour) / 0.25) + (int)Math.Ceiling(2 * (tempEventEnd - wakeHour));
 
                 dayPlan.Children.Add(placedEvent, 2, 3, startIndex, endIndex);
                 loadedEvents.Add(placedEvent);
             }
-
-        }
-
-        private void AddPlanned(PlannedTask pt)
-        {
-            //TODO
         }
 
         private bool OnToday(DayOfWeek dayOfWeek, Event e)
