@@ -59,9 +59,10 @@ namespace Planit.Data
             }
 
             int daysToDoAll = largestSpan.Days + 1;
+            int blocksInDay = (4 * hoursInDay);
 
             //create calendar object as int array for a "working platform"
-            int[,] calendar = new int[(4*hoursInDay),daysToDoAll];
+            int[,] calendar = new int[blocksInDay, daysToDoAll];
             DayOfWeek[] days = GetDaysOfWeek(today,daysToDoAll);
             DateTime[] dates = GetDates(today,daysToDoAll);
 
@@ -106,9 +107,10 @@ namespace Planit.Data
             //not sure if best to use dictionary here, but eh
             Dictionary<Task, int> blocksLeft = new Dictionary<Task, int>();
             Dictionary<Task, int> taskIDs = new Dictionary<Task, int>();
+            Dictionary<int, Task> IDtoTask = new Dictionary<int, Task>();
             int blocksToSchedule = 0;
 
-            int idCounter = 0;
+            int idCounter = 1;
             foreach(Task t in TasksList)
             {
                 int blocksForTask = (int)t.HoursLeft * 4;
@@ -117,6 +119,7 @@ namespace Planit.Data
                 blocksToSchedule += blocksForTask;
 
                 taskIDs.Add(t, idCounter);
+                IDtoTask.Add(idCounter, t);
                 idCounter++;
             }
 
@@ -134,12 +137,70 @@ namespace Planit.Data
             //calculate number of free blocks in the schedule
             //allowing an hour after/before bed for -- nothing
             //note we double count anything in the hour before/after bed (who knows if this is a bug or feature yet)
-            int blocksFree = (((4 * hoursInDay) - 8) * daysToDoAll) - blocksPlaced;
+            int blocksFree = ((blocksInDay - 8) * daysToDoAll) - blocksPlaced;
+
+            //these variable determine where the for loop starts
+            int lastDayPlaced = 0;
+            int lastBlockPlaced = 4;
 
             while(blocksFree > 0 && blocksToSchedule > 0)
             {
-                //TODO: the entire algorithm lol
+                Task t = MostPressing(blocksFree, blocksLeft);
 
+                for(int i = lastDayPlaced; i < daysToDoAll; i++)
+                {
+                    //reset after we scan to next day
+                    if (i != lastDayPlaced)
+                        lastBlockPlaced = 4;
+
+                    for(int j = lastBlockPlaced; j < blocksInDay-4; j++)
+                    {
+                        //if block is free
+                        if(calendar[j,i] != -1)
+                        {
+                            //add task block to calendar there, and update representation
+                            int id = taskIDs[t];
+                            calendar[j, i] = id;
+                            blocksFree--;
+                            blocksToSchedule--;
+                            blocksLeft[t] = blocksLeft[t] - 1;
+
+                            //break
+                            j = blocksInDay;
+                            i = daysToDoAll;
+                        }
+
+                    }
+                }
+            }
+
+            int currTask = -1;
+            for(int i = 0; i < daysToDoAll; i++)
+            {
+                int blocksByTask = 0;
+                for(int j = 0; j < blocksInDay; j++)
+                {
+                    //start of task
+                    if(calendar[j,i] > 0 && currTask == -1)
+                    {
+                        currTask = calendar[j, i];
+                        blocksByTask = j;
+                    }
+
+                    //end of task -- PLAN IT!
+                    if(calendar[j,i] != currTask)
+                    {
+                        Task futurePlanned = IDtoTask[currTask];
+                        DateTime dayOfTask = dates[i];
+                        TimeSpan start = IndexToTimeSpan(blocksByTask);
+                        TimeSpan end = IndexToTimeSpan(j + 1);
+
+                        CreatePlannedTask(futurePlanned, start, end, dayOfTask);
+
+                        currTask = -1;
+                        blocksByTask = 0;
+                    }
+                }
             }
 
 
@@ -224,6 +285,47 @@ namespace Planit.Data
             }
 
             return dates;
+        }
+
+        //returns which task is most pressing to do at the current junction based on:
+        // most pressing task = task for which blocksleft[task]/blocksFree is largest
+        private Task MostPressing(int blocksFree, Dictionary<Task,int> blocksLeft)
+        {
+            float worstRatio = 0;
+            Task mostPressing = null;
+
+            foreach(Task t in blocksLeft.Keys)
+            {
+                float currRatio = blocksLeft[t] / blocksFree;
+
+                if(currRatio > worstRatio)
+                {
+                    worstRatio = currRatio;
+                    mostPressing = t;
+                }
+            }
+
+            return mostPressing;
+        }
+
+        //from the wakeup time and the calendar index, get the eqivalent timespan
+        private TimeSpan IndexToTimeSpan(int calendarIndex)
+        {
+            int additonalHour = calendarIndex/4;
+            int additionalMin = (calendarIndex % 4) * 15;
+            TimeSpan toReturn = new TimeSpan(wakeHour + additonalHour, additionalMin, 0);
+
+            return toReturn;
+        }
+
+        async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
+        {
+            PlannedTask toAdd = new PlannedTask(parent);
+            toAdd.StartTime = startTime;
+            toAdd.EndTime = endTime;
+            toAdd.Date = date;
+
+            await App.DB.SavePlannedAsync(toAdd);
         }
         
         async public void UpdateTasks()

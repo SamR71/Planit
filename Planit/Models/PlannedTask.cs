@@ -16,9 +16,12 @@ namespace Planit.Models
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime {get; set;}
 
-        public PlannedTask()
+        public PlannedTask(Task parent)
         {
+            Parent = parent;
             UserModified = false;
+
+            Name = "DO: " + Parent.Name;
         }
 
     }
