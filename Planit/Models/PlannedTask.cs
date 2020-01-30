@@ -11,17 +11,14 @@ namespace Planit.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public bool UserModified { get; set; }
-        public Task Parent { get; }
+        public Task Parent { get; set; }
         public DateTime Date { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime {get; set;}
 
-        public PlannedTask(Task parent)
+        public PlannedTask()
         {
-            Parent = parent;
             UserModified = false;
-
-            Name = "DO: " + Parent.Name;
         }
 
     }

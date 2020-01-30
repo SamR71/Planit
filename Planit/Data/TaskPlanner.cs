@@ -320,7 +320,9 @@ namespace Planit.Data
 
         async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
         {
-            PlannedTask toAdd = new PlannedTask(parent);
+            PlannedTask toAdd = new PlannedTask();
+            toAdd.Parent = parent;
+            toAdd.Name = "DO: " + parent.Name;
             toAdd.StartTime = startTime;
             toAdd.EndTime = endTime;
             toAdd.Date = date;
@@ -328,8 +330,22 @@ namespace Planit.Data
             await App.DB.SavePlannedAsync(toAdd);
         }
         
+
         async public void UpdateTasks()
         {
+            //get all Planned Tasks
+            List<PlannedTask> allPlanned = await App.DB.GetPlannedAsync();
+
+            //go through each planned Task, check if we have gone past it
+            foreach(PlannedTask pt in allPlanned)
+            {
+                //TODO: Replace true with actual criterion
+                if (true)
+                {
+                    pt.Parent.HoursLeft = pt.Parent.HoursLeft - (float)pt.EndTime.Subtract(pt.StartTime).TotalHours;
+                    await App.DB.DeletePlannedAsync(pt);
+                }
+            }
 
         }
 
