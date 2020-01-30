@@ -179,10 +179,12 @@ namespace Planit
             base.OnAppearing();
         }
 
+        //load all Events and PlannedTasks, and add them to the calendar
         private async void LoadDayEvents(DateTime day)
         {
             DayOfWeek dayOfWeek = day.DayOfWeek;
             List<Event> EventsList = await App.DB.GetEventsAsync();
+            List<PlannedTask> PlannedList = await App.DB.GetPlannedAsync();
 
             //remove all previously loaded events
             foreach(View v in loadedEvents)
@@ -204,6 +206,14 @@ namespace Planit
                     {
                         AddEvent(e);
                     }
+                }
+            }
+
+            foreach(PlannedTask pt in PlannedList)
+            {
+                if(pt.Date == day)
+                {
+                    AddPlanned(pt);
                 }
             }
         }
@@ -248,6 +258,11 @@ namespace Planit
                 loadedEvents.Add(placedEvent);
             }
 
+        }
+
+        private void AddPlanned(PlannedTask pt)
+        {
+            //TODO
         }
 
         private bool OnToday(DayOfWeek dayOfWeek, Event e)
