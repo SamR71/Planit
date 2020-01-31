@@ -163,7 +163,7 @@ namespace Planit.Data
                     for(int j = lastBlockPlaced; j < blocksInDay-4; j++)
                     {
                         //if block is free
-                        if(calendar[j,i] != -1 && calendar[j-1,i] != -1)
+                        if(calendar[j,i] == 0 && calendar[j-1,i] == 0)
                         {
                             //add task block to calendar there, and update representation
                             int id = taskIDs[t];
@@ -171,6 +171,7 @@ namespace Planit.Data
                             blocksFree--;
                             blocksToSchedule--;
                             blocksLeft[t] = blocksLeft[t] - 1;
+                            System.Diagnostics.Debug.WriteLine("Just placed " + t.Name + ". At row: " + j + ", col:" + i);
 
                             lastBlockPlaced = j;
                             lastDayPlaced = i;
@@ -179,7 +180,7 @@ namespace Planit.Data
                             j = blocksInDay;
                             i = daysToDoAll;
 
-                            System.Diagnostics.Debug.WriteLine("Just placed " + t.Name + ". Blocks left to place: " + blocksToSchedule);
+                            
                         }
 
                     }
@@ -210,8 +211,9 @@ namespace Planit.Data
                         Task futurePlanned = IDtoTask[currTask];
                         DateTime dayOfTask = dates[i];
                         TimeSpan start = IndexToTimeSpan(blocksByTask);
-                        TimeSpan end = IndexToTimeSpan(j + 1);
+                        TimeSpan end = IndexToTimeSpan(j+1);
 
+                        System.Diagnostics.Debug.WriteLine("Just Planned: " + futurePlanned.Name + ". From: " + start +" to " +end);
                         CreatePlannedTask(futurePlanned, start, end, dayOfTask);
 
                         currTask = -1;
