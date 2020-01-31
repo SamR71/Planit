@@ -318,6 +318,7 @@ namespace Planit.Data
             return toReturn;
         }
 
+        //creates a planned task given the information, and adds it to the database
         async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
         {
             PlannedTask toAdd = new PlannedTask();
@@ -330,7 +331,7 @@ namespace Planit.Data
             await App.DB.SavePlannedAsync(toAdd);
         }
         
-
+        //when called, looks through all planned tasks, deletes any which have passed, and updates hoursLeft on its parent task accordingly
         async public void UpdateTasks()
         {
             //get all Planned Tasks

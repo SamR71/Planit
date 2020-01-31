@@ -106,5 +106,19 @@ namespace Planit.Data
             return _database.DeleteAsync(plannedToDelete);
         }
 
+        public Task<int> DeleteAllPlannedAsync(bool deleteUserModified)
+        {
+            if (deleteUserModified)
+            {
+                return _database.DeleteAllAsync<PlannedTask>();
+            }
+            else
+            {
+                return _database.Table<PlannedTask>()
+                                .Where(i => i.UserModified == false)
+                                .DeleteAsync();
+            }
+            
+        }
     }
 }
