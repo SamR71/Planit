@@ -163,7 +163,8 @@ namespace Planit.Data
                     for(int j = lastBlockPlaced; j < blocksInDay-4; j++)
                     {
                         //if block is free
-                        if(calendar[j,i] == 0 && calendar[j-1,i] == 0)
+                        System.Diagnostics.Debug.WriteLine("Looking at row: " + j + ", col:" + i +": "+calendar[j,i]);
+                        if (calendar[j,i] == 0 && calendar[j-1,i] != -1)
                         {
                             //add task block to calendar there, and update representation
                             int id = taskIDs[t];
@@ -195,14 +196,14 @@ namespace Planit.Data
             int currTask = -1;
             for(int i = 0; i < daysToDoAll; i++)
             {
-                int blocksByTask = 0;
+                int taskStartBlock = 0;
                 for(int j = 0; j < blocksInDay; j++)
                 {
                     //start of task
                     if(calendar[j,i] > 0 && currTask == -1)
                     {
                         currTask = calendar[j, i];
-                        blocksByTask = j;
+                        taskStartBlock = j;
                     }
 
                     //end of task -- PLAN IT!
@@ -210,14 +211,23 @@ namespace Planit.Data
                     {
                         Task futurePlanned = IDtoTask[currTask];
                         DateTime dayOfTask = dates[i];
-                        TimeSpan start = IndexToTimeSpan(blocksByTask);
-                        TimeSpan end = IndexToTimeSpan(j+1);
+                        TimeSpan start = IndexToTimeSpan(taskStartBlock);
+                        TimeSpan end = IndexToTimeSpan(j);
 
                         System.Diagnostics.Debug.WriteLine("Just Planned: " + futurePlanned.Name + ". From: " + start +" to " +end);
                         CreatePlannedTask(futurePlanned, start, end, dayOfTask);
 
-                        currTask = -1;
-                        blocksByTask = 0;
+                        //check if we bump into new planned task
+                        if(calendar[j,i] > 0)
+                        {
+                            currTask = calendar[j, i];
+                            taskStartBlock = j;
+                        }
+                        else
+                        {
+                            currTask = -1;
+                            taskStartBlock = 0;
+                        }
                     }
                 }
             }
