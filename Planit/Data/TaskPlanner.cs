@@ -74,6 +74,8 @@ namespace Planit.Data
             //go through all tasks and events, place in calendar
             //by placing in calendar, we mean putting a -1 there to signify -- its blocked
 
+            System.Diagnostics.Debug.WriteLine("Days to do all: " + daysToDoAll);
+
             int blocksPlaced = 0;
 
             foreach(Event e in EventsList)
@@ -81,10 +83,23 @@ namespace Planit.Data
                 //go through each day, see if we should put event in
                 for(int i = 0; i < daysToDoAll; i++)
                 {
-                    if (dates[i] == e.Date || OnToday(days[i], e))
+                    if(e.EventType == Event.Type.Recurring)
                     {
-                        blocksPlaced += AddBlock(e.StartTime.TotalHours,e.EndTime.TotalHours, calendar, i);
+                        if (OnToday(days[i], e))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Placing block for " + e.Name + ". From: " + e.StartTime.TotalHours + " to: " + e.EndTime.TotalHours + ", on:" + dates[i]);
+                            blocksPlaced += AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                        }
                     }
+                    else
+                    {
+                        if (dates[i] == e.Date)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Placing block for " + e.Name + ". From: " + e.StartTime.TotalHours + " to: " + e.EndTime.TotalHours + ", on:" + dates[i]);
+                            blocksPlaced += AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                        }
+                    }
+                    
 
                 }
 
