@@ -339,8 +339,9 @@ namespace Planit.Data
             //go through each planned Task, check if we have gone past it
             foreach(PlannedTask pt in allPlanned)
             {
-                //TODO: Replace true with actual criterion
-                if (true)
+                //checks if now is later than the end of the plannedTask
+                DateTime plannedTaskEnd = pt.Date.Add(pt.EndTime);
+                if (DateTime.Compare(DateTime.Now,plannedTaskEnd) > 0)
                 {
                     pt.Parent.HoursLeft = pt.Parent.HoursLeft - (float)pt.EndTime.Subtract(pt.StartTime).TotalHours;
                     await App.DB.DeletePlannedAsync(pt);
