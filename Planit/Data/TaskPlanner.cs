@@ -6,10 +6,17 @@ using Xamarin.Essentials;
 
 namespace Planit.Data
 {
-    class TaskPlanner
+    public class TaskPlanner
     {
         private int wakeHour;
         private int sleepHour;
+
+
+        public TaskPlanner()
+        {
+
+        }
+
         //calculates (or recalculates) the positioning of PlannedTasks
         //NOTE: a block of time here is a 15 minute interval
         //-->synchs up with how the calendar is currently implemented
@@ -46,14 +53,12 @@ namespace Planit.Data
             //get farthest out Deadline
             DateTime today = DateTime.Today;
 
-            DateTime farthestOut = DateTime.Today;
             TimeSpan largestSpan = new TimeSpan(0);
             foreach(Task t in TasksList)
             {
                 TimeSpan diff = t.Due.Subtract(today);
                 if(diff.TotalDays > largestSpan.TotalDays)
                 {
-                    farthestOut = t.Due;
                     largestSpan = diff;
                 }
             }
@@ -86,7 +91,7 @@ namespace Planit.Data
             }
 
             //only do if we recalculating all
-            if (recalcAll)
+            if (!recalcAll)
             {
                 foreach (PlannedTask pt in PlannedList)
                 {
@@ -129,8 +134,9 @@ namespace Planit.Data
                 foreach(PlannedTask pt in PlannedList)
                 {
                     int blocksUsed = (int)Math.Ceiling(pt.EndTime.Subtract(pt.StartTime).TotalHours * 4);
+                    Task parent = await App.DB.GetTaskAsync(pt.ParentID);
 
-                    blocksLeft[pt.Parent] =  blocksLeft[pt.Parent] - blocksUsed;
+                    blocksLeft[parent] =  blocksLeft[parent] - blocksUsed;
                 }
             }
 
@@ -141,9 +147,10 @@ namespace Planit.Data
 
             //these variable determine where the for loop starts
             int lastDayPlaced = 0;
-            int lastBlockPlaced = 4;
 
-            while(blocksFree > 0 && blocksToSchedule > 0)
+            int lastBlockPlaced = (DateTime.Now.Hour * 4) + (DateTime.Now.Minute / 15) - (wakeHour*4);
+
+            while (blocksFree > 0 && blocksToSchedule > 0)
             {
                 Task t = MostPressing(blocksFree, blocksLeft);
 
@@ -156,7 +163,7 @@ namespace Planit.Data
                     for(int j = lastBlockPlaced; j < blocksInDay-4; j++)
                     {
                         //if block is free
-                        if(calendar[j,i] != -1)
+                        if(calendar[j,i] != -1 && calendar[j-1,i] != -1)
                         {
                             //add task block to calendar there, and update representation
                             int id = taskIDs[t];
@@ -165,15 +172,25 @@ namespace Planit.Data
                             blocksToSchedule--;
                             blocksLeft[t] = blocksLeft[t] - 1;
 
+                            lastBlockPlaced = j;
+                            lastDayPlaced = i;
+
                             //break
                             j = blocksInDay;
                             i = daysToDoAll;
+
+                            System.Diagnostics.Debug.WriteLine("Just placed " + t.Name + ". Blocks left to place: " + blocksToSchedule);
                         }
 
                     }
                 }
             }
 
+            //clear existing PlannedTasks that need to be pulled
+            await App.DB.DeleteAllPlannedAsync(recalcAll);
+
+
+            //create plannedTasks for all of the things in the working calendar
             int currTask = -1;
             for(int i = 0; i < daysToDoAll; i++)
             {
@@ -188,7 +205,7 @@ namespace Planit.Data
                     }
 
                     //end of task -- PLAN IT!
-                    if(calendar[j,i] != currTask)
+                    if(calendar[j,i] != currTask && currTask != -1)
                     {
                         Task futurePlanned = IDtoTask[currTask];
                         DateTime dayOfTask = dates[i];
@@ -296,7 +313,7 @@ namespace Planit.Data
 
             foreach(Task t in blocksLeft.Keys)
             {
-                float currRatio = blocksLeft[t] / blocksFree;
+                float currRatio = (float)blocksLeft[t] / (float)blocksFree;
 
                 if(currRatio > worstRatio)
                 {
@@ -322,7 +339,8 @@ namespace Planit.Data
         async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
         {
             PlannedTask toAdd = new PlannedTask();
-            toAdd.Parent = parent;
+            toAdd.ParentID = parent.ID;
+            toAdd.UserModified = false;
             toAdd.Name = "DO: " + parent.Name;
             toAdd.StartTime = startTime;
             toAdd.EndTime = endTime;
@@ -344,7 +362,14 @@ namespace Planit.Data
                 DateTime plannedTaskEnd = pt.Date.Add(pt.EndTime);
                 if (DateTime.Compare(DateTime.Now,plannedTaskEnd) > 0)
                 {
-                    pt.Parent.HoursLeft = pt.Parent.HoursLeft - (float)pt.EndTime.Subtract(pt.StartTime).TotalHours;
+                    Task parent = await App.DB.GetTaskAsync(pt.ParentID);
+
+                    if (parent != null)
+                    {
+                        parent.HoursLeft = parent.HoursLeft - (float)pt.EndTime.Subtract(pt.StartTime).TotalHours;
+                        await App.DB.SaveTaskAsync(parent);
+                    }
+                    
                     await App.DB.DeletePlannedAsync(pt);
                 }
             }

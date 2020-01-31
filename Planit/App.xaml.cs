@@ -9,6 +9,7 @@ namespace Planit
     public partial class App : Application
     {
         static Database db;
+        static TaskPlanner tp;
 
         public static Database DB
         {
@@ -22,6 +23,18 @@ namespace Planit
             }
         }
 
+        public static TaskPlanner TP
+        {
+            get
+            {
+                if(tp == null)
+                {
+                    tp = new TaskPlanner();
+                }
+                return tp;
+            }
+        }
+
         public App()
         {
             InitializeComponent();
@@ -31,6 +44,7 @@ namespace Planit
 
         protected override void OnStart()
         {
+            TP.UpdateTasks();
         }
 
         protected override void OnSleep()

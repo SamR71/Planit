@@ -38,6 +38,8 @@ namespace Planit
             Preferences.Set("bedtime", saveBedTime);
             Preferences.Set("waketime", saveWakeTime);
 
+            App.TP.PlanTasks(true);
+
         }
     }
 }
