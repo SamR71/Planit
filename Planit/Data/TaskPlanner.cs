@@ -165,6 +165,9 @@ namespace Planit.Data
 
             int lastBlockPlaced = (DateTime.Now.Hour * 4) + (DateTime.Now.Minute / 15) - (wakeHour*4);
 
+            //task blocks consecutively added in one go
+            int consecutiveAdded = 0;
+
             while (blocksFree > 0 && blocksToSchedule > 0)
             {
                 Task t = MostPressing(blocksFree, blocksLeft);
@@ -177,10 +180,22 @@ namespace Planit.Data
 
                     for(int j = lastBlockPlaced; j < blocksInDay-4; j++)
                     {
+                        
+
+
                         //if block is free
                         System.Diagnostics.Debug.WriteLine("Looking at row: " + j + ", col:" + i +": "+calendar[j,i]);
-                        if (calendar[j,i] == 0 && calendar[j-1,i] != -1)
+                        if (calendar[j,i] == 0 && calendar[j-1,i] != -1 && calendar[j + 1, i] != -1)
                         {
+                            //if we need break (consecutiveAdded > 8) and we can take one (after break we have 45 min to next event), take break
+                            if (consecutiveAdded >= 8 && calendar[j + 1, i] == 0 && calendar[j + 2, i] == 0 && calendar[j + 3, i] == 0)
+                            {
+                                //block out current block
+                                calendar[j, i] = -1;
+                                blocksFree--;
+                                //move to next one (we know we have room for two!)
+                                j++;
+                            }
                             //add task block to calendar there, and update representation
                             int id = taskIDs[t];
                             calendar[j, i] = id;
@@ -191,6 +206,16 @@ namespace Planit.Data
 
                             lastBlockPlaced = j;
                             lastDayPlaced = i;
+
+                            //check consecutive added
+                            if(calendar[j-1,i] > 0)
+                            {
+                                consecutiveAdded++;
+                            }
+                            else
+                            {
+                                consecutiveAdded = 1;
+                            }
 
                             //break
                             j = blocksInDay;
