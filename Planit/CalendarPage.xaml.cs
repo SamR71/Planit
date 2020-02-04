@@ -173,12 +173,13 @@ namespace Planit
             loadedEvents = new List<View>();
 
             App.TP.UpdateTasks();
-            LoadDayEvents(shownDate);
+            //LoadDayEvents(shownDate);
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            LoadDayEvents(shownDate);
         }
 
         //load all Events and PlannedTasks, and add them to the calendar
