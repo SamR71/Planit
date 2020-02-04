@@ -237,37 +237,54 @@ namespace Planit.Data
             for(int i = 0; i < daysToDoAll; i++)
             {
                 int taskStartBlock = 0;
-                for(int j = 0; j < blocksInDay; j++)
+                Dictionary<int, int> blocksPerTask = new Dictionary<int, int>(); ;
+                for (int j = 0; j < blocksInDay; j++)
                 {
-                    //start of task
-                    if(calendar[j,i] > 0 && currTask == -1)
+                    //start of task block
+                    if (calendar[j,i] > 0 && currTask == -1)
                     {
                         currTask = calendar[j, i];
                         taskStartBlock = j;
+
+                        blocksPerTask.Clear();
+
                     }
 
-                    //end of task -- PLAN IT!
-                    if(calendar[j,i] != currTask && currTask != -1)
+                    //inside block -- update task
+                    if(calendar[j,i] > 0) 
                     {
-                        Task futurePlanned = IDtoTask[currTask];
-                        DateTime dayOfTask = dates[i];
-                        TimeSpan start = IndexToTimeSpan(taskStartBlock);
-                        TimeSpan end = IndexToTimeSpan(j);
-
-                        System.Diagnostics.Debug.WriteLine("Just Planned: " + futurePlanned.Name + ". From: " + start +" to " +end);
-                        CreatePlannedTask(futurePlanned, start, end, dayOfTask);
-
-                        //check if we bump into new planned task
-                        if(calendar[j,i] > 0)
+                        if (blocksPerTask.ContainsKey(calendar[j, i]))
                         {
-                            currTask = calendar[j, i];
-                            taskStartBlock = j;
+                            blocksPerTask[calendar[j, i]] = blocksPerTask[calendar[j, i]] + 1;
                         }
                         else
                         {
-                            currTask = -1;
-                            taskStartBlock = 0;
+                            blocksPerTask[calendar[j, i]] = 1;
                         }
+
+                    }
+                    
+
+                    //end of task -- PLAN IT!
+                    if(calendar[j,i] <= 0 && currTask != -1)
+                    {
+                        foreach(int t in blocksPerTask.Keys)
+                        {
+                            int blocksReq = blocksPerTask[t];
+
+                            Task futurePlanned = IDtoTask[t];
+                            DateTime dayOfTask = dates[i];
+                            TimeSpan start = IndexToTimeSpan(taskStartBlock);
+                            TimeSpan end = IndexToTimeSpan(taskStartBlock+blocksReq);
+                            System.Diagnostics.Debug.WriteLine("Just Planned: " + futurePlanned.Name + ". From: " + start + " to " + end);
+
+                            CreatePlannedTask(futurePlanned, start, end, dayOfTask);
+
+                            taskStartBlock += blocksReq;
+                        }
+
+                        currTask = -1;
+                        taskStartBlock = 0;
                     }
                 }
             }

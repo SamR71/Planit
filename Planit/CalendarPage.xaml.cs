@@ -247,10 +247,12 @@ namespace Planit
                     TextColor = Color.Black,
                     CornerRadius = 15,
                     Text = name,
+                    FontSize = 12,
                     Margin = new Thickness(0, 0, 0, 0),
-                    Padding = new Thickness(2, 2, 2, 2),
+                    Padding = new Thickness(0, -3, 0, 0),
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.FillAndExpand
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                     
                 };
 
                 //get appropriate indicies to schedule
