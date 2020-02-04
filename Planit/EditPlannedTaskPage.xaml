@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Planit.EditPlannedTaskPage"
+             Title="Edit Entry">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding Name}"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 10, 3, 0"/>
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="Start Time:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <TimePicker
+                    Margin="0,0,15,3"
+                    x:Name="starttime"
+                    Time="{Binding StartTime}"/>
+            </StackLayout>
+            <StackLayout
+                Orientation="Horizontal">
+                <Label Text="End Time:"
+                FontSize="Title"
+                VerticalOptions="Start" 
+                HorizontalOptions="Start"
+                Margin="15, 3, 3, 3"/>
+                <TimePicker
+                    Margin="0,0,15,3"
+                    x:Name="endtime"
+                    Time="{Binding EndTime}"/>
+            </StackLayout>
+            <Button
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand"
+                Text="Save Entry"
+                Clicked="Save_Button_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
