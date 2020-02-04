@@ -200,13 +200,13 @@ namespace Planit
                 //check if event applies to current day
                 if(e.EventType == Event.Type.OneTime && e.Date == day)
                 {
-                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.PowderBlue);
+                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.PowderBlue,null);
                 }
                 else
                 {
                     if (OnToday(dayOfWeek, e))
                     {
-                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.PowderBlue);
+                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.PowderBlue,null);
                     }
                 }
             }
@@ -215,13 +215,13 @@ namespace Planit
             {
                 if(pt.Date == day)
                 {
-                    AddEntry(pt.StartTime,pt.EndTime,pt.Name,Color.CornflowerBlue);
+                    AddEntry(pt.StartTime,pt.EndTime,pt.Name,Color.CornflowerBlue,pt);
                 }
             }
         }
 
 
-        private void AddEntry(TimeSpan startTime, TimeSpan endTime, String name, Color color)
+        private void AddEntry(TimeSpan startTime, TimeSpan endTime, String name, Color color, PlannedTask pt)
         {
             //make sure Event actually fits in the given sleep range
             double taskStart = startTime.TotalHours;
@@ -251,9 +251,15 @@ namespace Planit
                     Margin = new Thickness(0, 0, 0, 0),
                     Padding = new Thickness(0, -3, 0, 0),
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand
                      
                 };
+
+                if(pt != null)
+                {
+                    placedEvent.BindingContext = pt;
+                    placedEvent.Clicked += PlacedEvent_Clicked;
+                }
 
                 //get appropriate indicies to schedule
                 int startIndex = (int)Math.Floor((taskStart - wakeHour) / 0.25) + 1 + (int)Math.Floor(2 * (taskStart - wakeHour));
@@ -262,6 +268,16 @@ namespace Planit
                 dayPlan.Children.Add(placedEvent, 2, 3, startIndex, endIndex);
                 loadedEvents.Add(placedEvent);
             }
+        }
+
+        async private void PlacedEvent_Clicked(object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+
+            await Navigation.PushAsync(new EditPlannedTaskPage
+            {
+                BindingContext = b.BindingContext as PlannedTask
+            });
         }
 
         private bool OnToday(DayOfWeek dayOfWeek, Event e)

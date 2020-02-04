@@ -113,7 +113,7 @@ namespace Planit.Data
                     for (int i = 0; i < daysToDoAll; i++)
                     {
                         //go through each day, see if we should put task in
-                        if (pt.Date == dates[i])
+                        if (pt.Date == dates[i] && pt.UserModified)
                         {
                             blocksPlaced += AddBlock(pt.StartTime.TotalHours,pt.EndTime.TotalHours, calendar, i);
                         }
@@ -126,21 +126,20 @@ namespace Planit.Data
 
             //not sure if best to use dictionary here, but eh
             Dictionary<Task, int> blocksLeft = new Dictionary<Task, int>();
-            Dictionary<Task, int> taskIDs = new Dictionary<Task, int>();
+            
             Dictionary<int, Task> IDtoTask = new Dictionary<int, Task>();
             int blocksToSchedule = 0;
 
-            int idCounter = 1;
             foreach(Task t in TasksList)
             {
+
+                System.Diagnostics.Debug.WriteLine("MY NAME IS: " + t.Name + " WITH ID:" + t.ID);
                 int blocksForTask = (int)t.HoursLeft * 4;
 
                 blocksLeft.Add(t, blocksForTask);
                 blocksToSchedule += blocksForTask;
 
-                taskIDs.Add(t, idCounter);
-                IDtoTask.Add(idCounter, t);
-                idCounter++;
+                IDtoTask.Add(t.ID, t);
             }
 
             //go through and subtract the blocks used by the "planned" parts of the task
@@ -148,10 +147,26 @@ namespace Planit.Data
             {
                 foreach(PlannedTask pt in PlannedList)
                 {
-                    int blocksUsed = (int)Math.Ceiling(pt.EndTime.Subtract(pt.StartTime).TotalHours * 4);
-                    Task parent = await App.DB.GetTaskAsync(pt.ParentID);
+                    if (pt.UserModified)
+                    {
+                        int blocksUsed = (int)Math.Ceiling(pt.EndTime.Subtract(pt.StartTime).TotalHours * 4);
+                        Task parent = IDtoTask[pt.ParentID];
 
-                    blocksLeft[parent] =  blocksLeft[parent] - blocksUsed;
+                        System.Diagnostics.Debug.WriteLine("MY NAME IS: "+pt.Name+". MY PARENTS NAME IS: "+parent.Name+" WITH ID:"+parent.ID);
+
+                        if (blocksLeft[parent] - blocksUsed <= 0)
+                        {
+                            blocksToSchedule -= blocksLeft[parent];
+                            blocksLeft[parent] = 0;
+                        }
+                        else
+                        {
+                            blocksToSchedule -= blocksUsed;
+                            blocksLeft[parent] = blocksLeft[parent] - blocksUsed;
+                        }
+
+                    }
+
                 }
             }
 
@@ -197,7 +212,7 @@ namespace Planit.Data
                                 j++;
                             }
                             //add task block to calendar there, and update representation
-                            int id = taskIDs[t];
+                            int id = t.ID;
                             calendar[j, i] = id;
                             blocksFree--;
                             blocksToSchedule--;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Planit.Models;
 
 namespace Planit
 {
@@ -15,6 +16,16 @@ namespace Planit
         public EditPlannedTaskPage()
         {
             InitializeComponent();
+        }
+
+        async private void Save_Button_Clicked(object sender, EventArgs e)
+        {
+            var PlannedTask = (PlannedTask)BindingContext;
+            PlannedTask.UserModified = true;
+            await App.DB.SavePlannedAsync(PlannedTask);
+            App.TP.PlanTasks(false);
+            await Navigation.PopAsync();
+
         }
     }
 }
