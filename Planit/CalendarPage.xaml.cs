@@ -24,6 +24,7 @@ namespace Planit
         public CalendarPage()
         {
             this.Title = "My Plan";
+            
 
             StackLayout mainStack = new StackLayout
             {
@@ -171,6 +172,7 @@ namespace Planit
 
             loadedEvents = new List<View>();
 
+            App.TP.UpdateTasks();
             LoadDayEvents(shownDate);
         }
 

@@ -425,7 +425,7 @@ namespace Planit.Data
                     await App.DB.DeletePlannedAsync(pt);
                 }
             }
-
+            System.Diagnostics.Debug.WriteLine("BRO IM KINDA FUCKIN DONE");
         }
 
     }

@@ -44,7 +44,7 @@ namespace Planit
 
         protected override void OnStart()
         {
-            TP.UpdateTasks();
+            
         }
 
         protected override void OnSleep()
