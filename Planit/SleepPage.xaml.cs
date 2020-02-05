@@ -43,9 +43,8 @@ namespace Planit
 
         }
 
-        async private void Logout_Button_Clicked(object sender, EventArgs e)
+        private void Logout_Button_Clicked(object sender, EventArgs e)
         {
             App.Current.MainPage = new NavigationPage(new LoginPage());
         }
-    }
 }

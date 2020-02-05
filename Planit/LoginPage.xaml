@@ -47,7 +47,7 @@
                 Margin="0,0,0,0"
                 Clicked="Signup_Button_Clicked"
                 BackgroundColor="White"
-                TextColor="PowderBlue"/>
+                TextColor="LightCoral"/>
             <Label
                 VerticalOptions="CenterAndExpand"/>
         </StackLayout>

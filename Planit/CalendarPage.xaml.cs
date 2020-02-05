@@ -207,7 +207,7 @@ namespace Planit
                 {
                     if (OnToday(dayOfWeek, e))
                     {
-                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.PowderBlue,null);
+                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.Orchid,null);
                     }
                 }
             }
@@ -216,7 +216,7 @@ namespace Planit
             {
                 if(pt.Date == day)
                 {
-                    AddEntry(pt.StartTime,pt.EndTime,pt.Name,Color.CornflowerBlue,pt);
+                    AddEntry(pt.StartTime,pt.EndTime,pt.Name,Color.MediumVioletRed,pt);
                 }
             }
         }

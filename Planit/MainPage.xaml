@@ -19,13 +19,13 @@
             <local:EventsPage/>
         </x:Arguments>
     </NavigationPage>
-    
+
     <NavigationPage Title="Tasks">
         <x:Arguments>
             <local:TasksPage/>
         </x:Arguments>
     </NavigationPage>
-    
+
     <NavigationPage Title="Sleep and Settings">
         <x:Arguments>
             <local:SleepPage/>
