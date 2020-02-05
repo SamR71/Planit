@@ -39,6 +39,7 @@ namespace Planit
             Preferences.Set("waketime", saveWakeTime);
 
             App.TP.PlanTasks(true);
+            App.Current.MainPage = new MainPage();
 
         }
 
