@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:Planit"
              mc:Ignorable="d"
-            x:Class="Planit.MainPage">
+            x:Class="Planit.MainPage"
+            NavigationPage.HasNavigationBar="false">
   <!--Pages can be added as references or inline-->
     <NavigationPage Title="Plan">
         <x:Arguments>
@@ -25,7 +26,7 @@
         </x:Arguments>
     </NavigationPage>
     
-    <NavigationPage Title="Sleep">
+    <NavigationPage Title="Sleep and Settings">
         <x:Arguments>
             <local:SleepPage/>
         </x:Arguments>

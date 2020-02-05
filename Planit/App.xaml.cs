@@ -11,6 +11,7 @@ namespace Planit
         static Database db;
         static TaskPlanner tp;
 
+
         public static Database DB
         {
             get
@@ -35,11 +36,14 @@ namespace Planit
             }
         }
 
+
         public App()
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            NavigationPage main = new NavigationPage(new LoginPage());
+
+            MainPage = main;
         }
 
         protected override void OnStart()

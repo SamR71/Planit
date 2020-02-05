@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Planit.LoginPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Welcome to Planit!"
+                FontSize="Title"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+
+             <Label Text="Email:"
+                FontSize="Medium"
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="15, 3, 0, 3"/>
+            <Entry
+                Margin="15,0,15,0"
+                x:Name="emailForm"/>
+            
+             <Label Text="Password:"
+                FontSize="Medium"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"
+                Margin="15, 3, 3, 3"/>
+            <Entry
+                Margin="15,0,15,0"
+                IsPassword="True"
+                x:Name="passwordForm"/>
+            
+            <Button
+                VerticalOptions="Center"
+                HorizontalOptions="FillAndExpand"
+                Text="Log In"
+                Clicked="Login_Button_Clicked"/>
+            <Label Text="Invalid Email or Password"
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand" 
+                IsVisible="False"
+                x:Name="invalidLoginLabel"/>
+            <Button Text="Or, Create an Account!"
+                VerticalOptions="Center" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="0,0,0,0"
+                Clicked="Signup_Button_Clicked"
+                BackgroundColor="White"
+                TextColor="PowderBlue"/>
+            <Label
+                VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

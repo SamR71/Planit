@@ -27,10 +27,20 @@
                     x:Name="wakeupsetter"/>
 
             <Button Text="Save Preferences"
-                    Margin="15,15,15,15"
-                    VerticalOptions="EndAndExpand"
+                    Margin="15,0,15,15"
+                    VerticalOptions="StartAndExpand"
                     HorizontalOptions="FillAndExpand"
                     Clicked="Button_Clicked"/>
+
+            <Label Text="Account:"
+                VerticalOptions="End" 
+                HorizontalOptions="StartAndExpand"
+                Margin="15,3,3,0"
+                FontSize="Title"/>
+            <Button Text="Log Out of Planit"
+                    VerticalOptions="End"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="Logout_Button_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
