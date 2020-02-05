@@ -47,4 +47,5 @@ namespace Planit
         {
             App.Current.MainPage = new NavigationPage(new LoginPage());
         }
+    }
 }
