@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,19 @@ namespace Planit
         {
             if(passwordForm.Text == confirmForm.Text)
             {
+                var myHttpClient = new HttpClient();
+                var uri = new Uri(Constants.loginURL);
+
+                var formContent = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    {"email",emailForm.Text},
+                    {"password", passwordForm.Text }
+                });
+
+                var response = myHttpClient.PostAsync(uri.ToString(), formContent).Result;
+
+                System.Diagnostics.Debug.WriteLine(await response.Content.ReadAsStringAsync());
+
                 await Navigation.PopAsync();
             }
             else

@@ -201,7 +201,7 @@ namespace Planit
                 //check if event applies to current day
                 if(e.EventType == Event.Type.OneTime && e.Date == day)
                 {
-                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.PowderBlue,null);
+                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.Orchid, null);
                 }
                 else
                 {
@@ -266,7 +266,13 @@ namespace Planit
                 int startIndex = (int)Math.Floor((taskStart - wakeHour) / 0.25) + 1 + (int)Math.Floor(2 * (taskStart - wakeHour));
                 int endIndex = (int)Math.Ceiling((tempEventEnd - wakeHour) / 0.25) + (int)Math.Ceiling(2 * (tempEventEnd - wakeHour));
 
-                dayPlan.Children.Add(placedEvent, 2, 3, startIndex, endIndex);
+                System.Diagnostics.Debug.WriteLine("Adding " + name + " from " + startIndex + " to " + endIndex);
+
+                if(startIndex != endIndex)
+                {
+                    dayPlan.Children.Add(placedEvent, 2, 3, startIndex, endIndex);
+                }
+
                 loadedEvents.Add(placedEvent);
             }
         }
