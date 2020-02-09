@@ -18,13 +18,12 @@ namespace Planit
             InitializeComponent();
         }
 
-        //placeholder obviously, more stuff needed
         async private void Signup_Button_Clicked(object sender, EventArgs e)
         {
             if(passwordForm.Text == confirmForm.Text)
             {
                 var myHttpClient = new HttpClient();
-                var uri = new Uri(Constants.loginURL);
+                var uri = new Uri(Constants.signupURL);
 
                 var formContent = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
@@ -34,12 +33,22 @@ namespace Planit
 
                 var response = myHttpClient.PostAsync(uri.ToString(), formContent).Result;
 
-                System.Diagnostics.Debug.WriteLine(await response.Content.ReadAsStringAsync());
+                string res = await response.Content.ReadAsStringAsync();
 
-                await Navigation.PopAsync();
+                if(res == "Success: User Signed Up!")
+                {
+                    await Navigation.PopAsync();
+                }
+                else
+                {
+                    invalidSignupLabel.Text = res;
+                    invalidSignupLabel.IsVisible = true;
+                }
+                
             }
             else
             {
+                invalidSignupLabel.Text = "Error: Passwords do not Match";
                 invalidSignupLabel.IsVisible = true;
             }
         }
