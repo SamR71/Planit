@@ -6,11 +6,9 @@
              mc:Ignorable="d"
              x:Class="Planit.CalendarPage"
              Title="My Plan">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to the Planit Calendar!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="?"
+                     Clicked="OnHelpPageClicked" />
+    </ContentPage.ToolbarItems>
+
 </ContentPage>

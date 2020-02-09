@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Planit.HelpPage"
+             Title="Planit Help">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Label Text="Planit Help"
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Title"
+                    Margin="10,10,10,10"/>
+                <Label Text="My Plan"
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Large"
+                    Margin="50,10,10,0"/>
+                <Label Text="View your daily Plan. Tap on any planned Task entry to edit it."
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Medium"
+                    Margin="60,0,10,10"/>
+                <Label Text="Events"
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Large"
+                    Margin="50,0,10,10"/>
+                <Label Text="View and create events. Events are any block of time with an already planned obligation."
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Medium"
+                    Margin="60,0,10,10"/>
+                <Label Text="Tasks"
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Large"
+                    Margin="50,0,10,10"/>
+                <Label Text="View and create your Tasks. Tasks are any task that you wish to complete. Just give some details, and Planit will schedule time for you to complete it."
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Medium"
+                    Margin="60,0,10,10"/>
+                <Label Text="Sleep and Settings"
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Large"
+                    Margin="50,0,10,10"/>
+                <Label Text="Change when you go to bed/wake up. Also, log out of Planit if you wish to."
+                    VerticalOptions="Start" 
+                    HorizontalOptions="Start"
+                    FontSize="Medium"
+                    Margin="60,0,10,10"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

@@ -23,8 +23,7 @@ namespace Planit
 
         public CalendarPage()
         {
-            this.Title = "My Plan";
-            
+            InitializeComponent();
 
             StackLayout mainStack = new StackLayout
             {
@@ -336,6 +335,11 @@ namespace Planit
             shownDate = shownDate.AddDays(-1);
             dateLabel.Text = shownDate.ToShortDateString();
             LoadDayEvents(shownDate);
+        }
+
+        async private void OnHelpPageClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new HelpPage());
         }
     }
 }
