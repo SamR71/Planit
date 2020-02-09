@@ -2,6 +2,7 @@
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
 using Planit.Data;
 
 namespace Planit
@@ -10,7 +11,6 @@ namespace Planit
     {
         static Database db;
         static TaskPlanner tp;
-
 
         public static Database DB
         {

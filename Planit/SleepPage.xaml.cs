@@ -45,6 +45,8 @@ namespace Planit
 
         private void Logout_Button_Clicked(object sender, EventArgs e)
         {
+            Preferences.Set("savedEmail", null);
+            Preferences.Set("savedPassword", null);
             App.Current.MainPage = new NavigationPage(new LoginPage());
         }
     }
