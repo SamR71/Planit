@@ -174,12 +174,19 @@ namespace Planit
 
             App.TP.UpdateTasks();
             //LoadDayEvents(shownDate);
+            App.Current.Properties["needsRefresh"] = true;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            LoadDayEvents(shownDate);
+            if((bool)App.Current.Properties["needsRefresh"] == true)
+            {
+                System.Diagnostics.Debug.WriteLine("refreshed calendar");
+                LoadDayEvents(shownDate);
+                App.Current.Properties["needsRefresh"] = false;
+            }
+            
         }
 
         //load all Events and PlannedTasks, and add them to the calendar

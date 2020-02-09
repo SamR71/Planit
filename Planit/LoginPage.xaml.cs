@@ -58,8 +58,8 @@ namespace Planit
             if (res != "Failure: Invalid Email or Password")
             {
                 App.Current.Properties["SessionID"] = res;
-                Preferences.Set("savedEmail", emailForm.Text);
-                Preferences.Set("savedPassword", passwordForm.Text);
+                Preferences.Set("savedEmail", email);
+                Preferences.Set("savedPassword", password);
                 Navigation.InsertPageBefore(new MainPage(), this);
                 await Navigation.PopAsync();
             }

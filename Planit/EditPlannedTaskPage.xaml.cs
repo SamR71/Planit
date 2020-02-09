@@ -24,6 +24,7 @@ namespace Planit
             PlannedTask.UserModified = true;
             await App.DB.SavePlannedAsync(PlannedTask);
             App.TP.PlanTasks(false);
+            App.Current.Properties["needsRefresh"] = true;
             await Navigation.PopAsync();
 
         }

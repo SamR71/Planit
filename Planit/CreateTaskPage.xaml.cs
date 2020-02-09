@@ -49,6 +49,7 @@ namespace Planit
 
             await App.DB.SaveTaskAsync(Task);
             App.TP.PlanTasks(true);
+            App.Current.Properties["needsRefresh"] = true;
             await Navigation.PopAsync();
         }
 
@@ -57,6 +58,7 @@ namespace Planit
             var Task = (Task)BindingContext;
             await App.DB.DeleteTaskAsync(Task);
             App.TP.PlanTasks(true);
+            App.Current.Properties["needsRefresh"] = true;
             await Navigation.PopAsync();
         }
     }
