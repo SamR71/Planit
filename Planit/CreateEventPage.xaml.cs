@@ -88,6 +88,7 @@ namespace Planit
             Event.EventType = eventType;
 
             await App.DB.SaveEventAsync(Event);
+
             App.TP.PlanTasks(true);
             App.Current.Properties["needsRefresh"] = true;
             await Navigation.PopAsync();
@@ -97,6 +98,7 @@ namespace Planit
         {
             var Event = (Event)BindingContext;
             await App.DB.DeleteEventAsync(Event);
+
             App.TP.PlanTasks(true);
             App.Current.Properties["needsRefresh"] = true;
             await Navigation.PopAsync();

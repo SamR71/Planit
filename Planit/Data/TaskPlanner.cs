@@ -420,7 +420,7 @@ namespace Planit.Data
         }
 
         //creates a planned task given the information, and adds it to the database
-        async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
+        private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
         {
             PlannedTask toAdd = new PlannedTask();
             toAdd.ParentID = parent.ID;
@@ -430,9 +430,9 @@ namespace Planit.Data
             toAdd.EndTime = endTime;
             toAdd.Date = date;
 
-            await App.DB.SavePlannedAsync(toAdd);
+            _ = App.DB.SavePlannedAsync(toAdd);
         }
-        
+
         //when called, looks through all planned tasks, deletes any which have passed, and updates hoursLeft on its parent task accordingly
         async public void UpdateTasks()
         {
@@ -451,10 +451,18 @@ namespace Planit.Data
                     if (parent != null)
                     {
                         parent.HoursLeft = parent.HoursLeft - (float)pt.EndTime.Subtract(pt.StartTime).TotalHours;
-                        await App.DB.SaveTaskAsync(parent);
+
+                        if(parent.HoursLeft <= 0)
+                        {
+                            _ = App.DB.DeleteTaskAsync(parent);
+                        }
+                        else
+                        {
+                            _ = App.DB.SaveTaskAsync(parent);
+                        }
                     }
                     
-                    await App.DB.DeletePlannedAsync(pt);
+                    _ = App.DB.DeletePlannedAsync(pt);
                 }
             }
             System.Diagnostics.Debug.WriteLine("BRO IM KINDA FUCKIN DONE");

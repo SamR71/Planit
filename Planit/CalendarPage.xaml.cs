@@ -75,7 +75,7 @@ namespace Planit
             backwardButton.Clicked += BackwardButton_Clicked;
             Button todayButton = new Button
             {
-                Text = "Today",
+                Text = "To Today",
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
@@ -192,8 +192,10 @@ namespace Planit
         private async void LoadDayEvents(DateTime day)
         {
             DayOfWeek dayOfWeek = day.DayOfWeek;
+
             List<Event> EventsList = await App.DB.GetEventsAsync();
             List<PlannedTask> PlannedList = await App.DB.GetPlannedAsync();
+
 
             //remove all previously loaded events
             foreach(View v in loadedEvents)

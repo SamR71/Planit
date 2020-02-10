@@ -4,6 +4,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
 using Planit.Data;
+using System.Collections.Generic;
+using Planit.Models;
 
 namespace Planit
 {
@@ -11,6 +13,9 @@ namespace Planit
     {
         static Database db;
         static TaskPlanner tp;
+        static List<Event> myevents;
+        static List<Task> mytasks;
+        static List<PlannedTask> myplanned;
 
         public static Database DB
         {
@@ -36,6 +41,29 @@ namespace Planit
             }
         }
 
+        public static List<Event> MyEvents
+        {
+            get
+            {
+                return myevents;
+            }
+        }
+
+        public static List<Task> MyTasks
+        {
+            get
+            {
+                return mytasks;
+            }
+        }
+
+        public static List<PlannedTask> MyPlanned
+        {
+            get
+            {
+                return myplanned;
+            }
+        }
 
         public App()
         {
@@ -46,9 +74,11 @@ namespace Planit
             MainPage = main;
         }
 
-        protected override void OnStart()
+        protected override async void OnStart()
         {
-            
+            myevents = await DB.GetEventsAsync();
+            mytasks = await DB.GetTasksAsync();
+            myplanned = await DB.GetPlannedAsync();
         }
 
         protected override void OnSleep()
