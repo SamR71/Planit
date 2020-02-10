@@ -209,13 +209,13 @@ namespace Planit
                 //check if event applies to current day
                 if(e.EventType == Event.Type.OneTime && e.Date == day)
                 {
-                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.Orchid, null);
+                    AddEntry(e.StartTime, e.EndTime, e.Name, Color.Orchid, e);
                 }
                 else
                 {
                     if (OnToday(dayOfWeek, e))
                     {
-                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.Orchid,null);
+                        AddEntry(e.StartTime,e.EndTime,e.Name,Color.Orchid, e);
                     }
                 }
             }
@@ -230,7 +230,7 @@ namespace Planit
         }
 
 
-        private void AddEntry(TimeSpan startTime, TimeSpan endTime, String name, Color color, PlannedTask pt)
+        private void AddEntry(TimeSpan startTime, TimeSpan endTime, String name, Color color, Object entry)
         {
             //make sure Event actually fits in the given sleep range
             double taskStart = startTime.TotalHours;
@@ -264,10 +264,20 @@ namespace Planit
                      
                 };
 
-                if(pt != null)
+                if(entry != null)
                 {
-                    placedEvent.BindingContext = pt;
-                    placedEvent.Clicked += PlacedEvent_Clicked;
+                    placedEvent.BindingContext = entry;
+
+                    if(entry is Event)
+                    {
+                        placedEvent.Clicked += PlacedEvent_Clicked;
+                    }
+
+                    if(entry is PlannedTask)
+                    {
+                        placedEvent.Clicked += PlacedTask_Clicked;
+                    }
+                    
                 }
 
                 //get appropriate indicies to schedule
@@ -286,6 +296,16 @@ namespace Planit
         }
 
         async private void PlacedEvent_Clicked(object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+
+            await Navigation.PushAsync(new CreateEventPage
+            {
+                BindingContext = b.BindingContext as Event
+            });
+        }
+
+        async private void PlacedTask_Clicked(object sender, EventArgs e)
         {
             Button b = (Button)sender;
 
