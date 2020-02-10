@@ -194,7 +194,17 @@ namespace Planit
             DayOfWeek dayOfWeek = day.DayOfWeek;
 
             List<Event> EventsList = await App.DB.GetEventsAsync();
-            List<PlannedTask> PlannedList = await App.DB.GetPlannedAsync();
+
+            List<PlannedTask> PlannedList;
+            if (App.MyPlanned == null)
+            {
+                PlannedList = await App.DB.GetPlannedAsync();
+            }
+            else
+            {
+                PlannedList = App.MyPlanned;
+            }
+             
 
 
             //remove all previously loaded events

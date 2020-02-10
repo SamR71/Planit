@@ -245,6 +245,7 @@ namespace Planit.Data
 
             //clear existing PlannedTasks that need to be pulled
             await App.DB.DeleteAllPlannedAsync(recalcAll);
+            App.MyPlanned.Clear();
 
 
             //create plannedTasks for all of the things in the working calendar
@@ -304,7 +305,7 @@ namespace Planit.Data
                 }
             }
 
-
+            App.Current.Properties["needsRefresh"] = true;
         }
 
         //THIS BETTER ALSO BE REFACTORED SOMEHOW
@@ -431,6 +432,7 @@ namespace Planit.Data
             toAdd.Date = date;
 
             _ = App.DB.SavePlannedAsync(toAdd);
+            App.MyPlanned.Add(toAdd);
         }
 
         //when called, looks through all planned tasks, deletes any which have passed, and updates hoursLeft on its parent task accordingly
@@ -454,15 +456,15 @@ namespace Planit.Data
 
                         if(parent.HoursLeft <= 0)
                         {
-                            _ = App.DB.DeleteTaskAsync(parent);
+                            await App.DB.DeleteTaskAsync(parent);
                         }
                         else
                         {
-                            _ = App.DB.SaveTaskAsync(parent);
+                            await App.DB.SaveTaskAsync(parent);
                         }
                     }
                     
-                    _ = App.DB.DeletePlannedAsync(pt);
+                    await App.DB.DeletePlannedAsync(pt);
                 }
             }
             System.Diagnostics.Debug.WriteLine("BRO IM KINDA FUCKIN DONE");
