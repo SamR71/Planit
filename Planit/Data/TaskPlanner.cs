@@ -116,6 +116,7 @@ namespace Planit.Data
                         if (pt.Date == dates[i] && pt.UserModified)
                         {
                             blocksPlaced += AddBlock(pt.StartTime.TotalHours,pt.EndTime.TotalHours, calendar, i);
+                            blocksPlaced += AddBlock(pt.PrevStartTime.TotalHours,pt.PrevEndTime.TotalHours, calendar, i);
                         }
                     }
 
@@ -428,7 +429,9 @@ namespace Planit.Data
             toAdd.UserModified = false;
             toAdd.Name = "DO: " + parent.Name;
             toAdd.StartTime = startTime;
+            toAdd.PrevStartTime = startTime;
             toAdd.EndTime = endTime;
+            toAdd.PrevEndTime = endTime;
             toAdd.Date = date;
 
             _ = App.DB.SavePlannedAsync(toAdd);

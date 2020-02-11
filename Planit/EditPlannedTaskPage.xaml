@@ -38,9 +38,14 @@
                     Time="{Binding EndTime}"/>
             </StackLayout>
             <Button
-                VerticalOptions="EndAndExpand"
+                VerticalOptions="End"
                 HorizontalOptions="FillAndExpand"
-                Text="Save Entry"
+                Text="Delete Entry"
+                Clicked="Delete_Button_Clicked"/>
+            <Button
+                VerticalOptions="End"
+                HorizontalOptions="FillAndExpand"
+                Text="Update Entry"
                 Clicked="Save_Button_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
