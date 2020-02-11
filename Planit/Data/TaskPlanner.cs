@@ -76,7 +76,8 @@ namespace Planit.Data
 
             System.Diagnostics.Debug.WriteLine("Days to do all: " + daysToDoAll);
 
-            int blocksPlaced = 0;
+            int[] blocksPlaced = new int[daysToDoAll];
+            int totalBlocksPlaced = 0;
 
             foreach(Event e in EventsList)
             {
@@ -88,7 +89,9 @@ namespace Planit.Data
                         if (OnToday(days[i], e))
                         {
                             System.Diagnostics.Debug.WriteLine("Placing block for " + e.Name + ". From: " + e.StartTime.TotalHours + " to: " + e.EndTime.TotalHours + ", on:" + dates[i]);
-                            blocksPlaced += AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                            int placed = AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                            blocksPlaced[i] += placed;
+                            totalBlocksPlaced += placed;
                         }
                     }
                     else
@@ -96,7 +99,9 @@ namespace Planit.Data
                         if (dates[i] == e.Date)
                         {
                             System.Diagnostics.Debug.WriteLine("Placing block for " + e.Name + ". From: " + e.StartTime.TotalHours + " to: " + e.EndTime.TotalHours + ", on:" + dates[i]);
-                            blocksPlaced += AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                            int placed = AddBlock(e.StartTime.TotalHours, e.EndTime.TotalHours, calendar, i);
+                            blocksPlaced[i] += placed;
+                            totalBlocksPlaced += placed;
                         }
                     }
                     
@@ -115,8 +120,12 @@ namespace Planit.Data
                         //go through each day, see if we should put task in
                         if (pt.Date == dates[i] && pt.UserModified)
                         {
-                            blocksPlaced += AddBlock(pt.StartTime.TotalHours,pt.EndTime.TotalHours, calendar, i);
-                            blocksPlaced += AddBlock(pt.PrevStartTime.TotalHours,pt.PrevEndTime.TotalHours, calendar, i);
+                            int placed = AddBlock(pt.StartTime.TotalHours, pt.EndTime.TotalHours, calendar, i);
+                            int prevPlaced = AddBlock(pt.PrevStartTime.TotalHours, pt.PrevEndTime.TotalHours, calendar, i);
+                            blocksPlaced[i] += placed;
+                            blocksPlaced[i] += prevPlaced;
+                            totalBlocksPlaced += placed;
+                            totalBlocksPlaced += prevPlaced;
                         }
                     }
 
@@ -174,7 +183,19 @@ namespace Planit.Data
             //calculate number of free blocks in the schedule
             //allowing an hour after/before bed for -- nothing
             //note we double count anything in the hour before/after bed (who knows if this is a bug or feature yet)
-            int blocksFree = ((blocksInDay - 8) * daysToDoAll) - blocksPlaced;
+
+            Dictionary<Task, int> blocksFreeForEach = new Dictionary<Task, int>();
+
+            int c = 0;
+            foreach(Task t in TasksList)
+            {
+                TimeSpan diff = t.Due.Subtract(today);
+                int daysToDo = diff.Days + 1;
+                blocksFreeForEach.Add(t, (((blocksInDay - 8) * daysToDo) - blocksPlaced[c]));
+                c++;
+            }
+
+            int blocksFree = ((blocksInDay - 8) * daysToDoAll) - totalBlocksPlaced;
 
             //these variable determine where the for loop starts
             int lastDayPlaced = 0;
@@ -186,7 +207,7 @@ namespace Planit.Data
 
             while (blocksFree > 0 && blocksToSchedule > 0)
             {
-                Task t = MostPressing(blocksFree, blocksLeft);
+                Task t = MostPressing(blocksFreeForEach, blocksLeft);
 
                 for(int i = lastDayPlaced; i < daysToDoAll; i++)
                 {
@@ -209,6 +230,12 @@ namespace Planit.Data
                                 //block out current block
                                 calendar[j, i] = -1;
                                 blocksFree--;
+
+                                foreach(Task ta in TasksList)
+                                {
+                                    blocksFreeForEach[ta]--;
+                                }
+
                                 //move to next one (we know we have room for two!)
                                 j++;
                             }
@@ -216,6 +243,12 @@ namespace Planit.Data
                             int id = t.ID;
                             calendar[j, i] = id;
                             blocksFree--;
+
+                            foreach (Task ta in TasksList)
+                            {
+                                blocksFreeForEach[ta]--;
+                            }
+
                             blocksToSchedule--;
                             blocksLeft[t] = blocksLeft[t] - 1;
                             System.Diagnostics.Debug.WriteLine("Just placed " + t.Name + ". At row: " + j + ", col:" + i);
@@ -392,14 +425,14 @@ namespace Planit.Data
 
         //returns which task is most pressing to do at the current junction based on:
         // most pressing task = task for which blocksleft[task]/blocksFree is largest
-        private Task MostPressing(int blocksFree, Dictionary<Task,int> blocksLeft)
+        private Task MostPressing(Dictionary<Task, int> blocksFree, Dictionary<Task,int> blocksLeft)
         {
             float worstRatio = 0;
             Task mostPressing = null;
 
             foreach(Task t in blocksLeft.Keys)
             {
-                float currRatio = (float)blocksLeft[t] / (float)blocksFree;
+                float currRatio = (float)blocksLeft[t] / (float)blocksFree[t];
 
                 if(currRatio > worstRatio)
                 {
