@@ -87,6 +87,7 @@ namespace Planit
 
         protected override void OnResume()
         {
+            TP.UpdateTasks();
         }
     }
 }

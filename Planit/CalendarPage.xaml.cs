@@ -313,6 +313,8 @@ namespace Planit
             {
                 BindingContext = b.BindingContext as Event
             });
+
+            LoadDayEvents(shownDate);
         }
 
         async private void PlacedTask_Clicked(object sender, EventArgs e)
@@ -323,6 +325,8 @@ namespace Planit
             {
                 BindingContext = b.BindingContext as PlannedTask
             });
+
+            LoadDayEvents(shownDate);
         }
 
         private bool OnToday(DayOfWeek dayOfWeek, Event e)
