@@ -13,7 +13,6 @@ namespace Planit
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CreateEventPage : ContentPage
     {
-        private bool isRecurring;
         private Event.Type eventType;
         public CreateEventPage()
         {
@@ -28,7 +27,6 @@ namespace Planit
 
             if (Event.Name == null) //Event has not yet been created
             {
-                isRecurring = true;
                 eventType = Event.Type.Recurring;
                 eventdate.Date = DateTime.Today;
             }
@@ -39,12 +37,10 @@ namespace Planit
 
                 if (Event.EventType == Event.Type.OneTime)
                 {
-                    isRecurring = false;
                     ReccuringSwitch.IsToggled = true;
                 }
                 else
                 {
-                    isRecurring = true;
                     MonCheck.IsChecked = Event.OnMon;
                     TueCheck.IsChecked = Event.OnTue;
                     WedCheck.IsChecked = Event.OnWed;
@@ -61,22 +57,15 @@ namespace Planit
 
         private void ReccuringSwitch_Toggled(object sender, ToggledEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("why we doin this");
             datepicker.IsVisible = !datepicker.IsVisible;
             daystag.IsVisible = !daystag.IsVisible;
             daysgrid.IsVisible = !daysgrid.IsVisible;
-
-            if (isRecurring)
-            {
-                eventType = Event.Type.OneTime;
-            }
-            else
-            {
-                eventType = Event.Type.Recurring;
-            }
         }
 
         async private void Save_Button_Clicked(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine(eventType);
             var Event = (Event)BindingContext;
             Event.OnMon = MonCheck.IsChecked;
             Event.OnTue = TueCheck.IsChecked;
@@ -85,7 +74,19 @@ namespace Planit
             Event.OnFri = FriCheck.IsChecked;
             Event.OnSat = SatCheck.IsChecked;
             Event.OnSun = SunCheck.IsChecked;
+
+            if (ReccuringSwitch.IsToggled)
+            {
+                eventType = Event.Type.OneTime;
+            }
+            else
+            {
+                eventType = Event.Type.Recurring;
+            }
+
+
             Event.EventType = eventType;
+            System.Diagnostics.Debug.WriteLine(Event.EventType);
 
             await App.DB.SaveEventAsync(Event);
 
