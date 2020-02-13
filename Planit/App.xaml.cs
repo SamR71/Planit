@@ -23,7 +23,7 @@ namespace Planit
             {
                 if(db == null)
                 {
-                    db = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "maindb.db3"));
+                    db = new Database(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "main.db3"));
                 }
                 return db;
             }

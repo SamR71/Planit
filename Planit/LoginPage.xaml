@@ -7,10 +7,11 @@
              x:Class="Planit.LoginPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Planit!"
-                FontSize="Title"
+            <Image 
+                Source="PlanitFinal"
                 VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+                HorizontalOptions="CenterAndExpand" 
+                HeightRequest="200"/>
 
              <Label Text="Email:"
                 FontSize="Medium"
