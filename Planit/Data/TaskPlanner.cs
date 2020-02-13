@@ -455,7 +455,7 @@ namespace Planit.Data
         }
 
         //creates a planned task given the information, and adds it to the database
-        private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
+        async private void CreatePlannedTask(Task parent, TimeSpan startTime, TimeSpan endTime, DateTime date)
         {
             PlannedTask toAdd = new PlannedTask();
             toAdd.ParentID = parent.ID;
@@ -467,7 +467,7 @@ namespace Planit.Data
             toAdd.PrevEndTime = endTime;
             toAdd.Date = date;
 
-            _ = App.DB.SavePlannedAsync(toAdd);
+            await App.DB.SavePlannedAsync(toAdd);
             App.MyPlanned.Add(toAdd);
         }
 

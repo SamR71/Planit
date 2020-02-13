@@ -194,18 +194,7 @@ namespace Planit
             DayOfWeek dayOfWeek = day.DayOfWeek;
 
             List<Event> EventsList = await App.DB.GetEventsAsync();
-
-            List<PlannedTask> PlannedList;
-            if (App.MyPlanned == null)
-            {
-                PlannedList = await App.DB.GetPlannedAsync();
-            }
-            else
-            {
-                PlannedList = App.MyPlanned;
-            }
-             
-
+            List<PlannedTask> PlannedList = await App.DB.GetPlannedAsync();
 
             //remove all previously loaded events
             foreach(View v in loadedEvents)
@@ -314,7 +303,6 @@ namespace Planit
                 BindingContext = b.BindingContext as Event
             });
 
-            LoadDayEvents(shownDate);
         }
 
         async private void PlacedTask_Clicked(object sender, EventArgs e)
@@ -326,7 +314,6 @@ namespace Planit
                 BindingContext = b.BindingContext as PlannedTask
             });
 
-            LoadDayEvents(shownDate);
         }
 
         private bool OnToday(DayOfWeek dayOfWeek, Event e)
